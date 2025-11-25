@@ -7,12 +7,13 @@ import org.kafka.publisher.EventPublisher;
 import org.kafka.publisher.SpringCloudStreamPublisher;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.cloud.stream.config.BindingServiceConfiguration;
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.context.annotation.Bean;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.converter.MessageConverter;
 
-@AutoConfiguration
+@AutoConfiguration(after = BindingServiceConfiguration.class)
 public class CommonKafkaConfig {
     @Bean
     @ConditionalOnMissingBean(name = "kafkaObjectMapper")
@@ -34,6 +35,7 @@ public class CommonKafkaConfig {
 
     @Bean
     @ConditionalOnMissingBean
+    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     public EventPublisher eventPublisher(StreamBridge streamBridge) {
         return new SpringCloudStreamPublisher(streamBridge);
     }
