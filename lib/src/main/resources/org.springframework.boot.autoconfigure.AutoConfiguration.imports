@@ -1,0 +1,3 @@
+org.bangbang.infrastructure.kafka.config.CommonKafkaConfig
+org.bangbang.infrastructure.kafka.config.CommonKafkaErrorConfig
+org.bangbang.infrastructure.kafka.config.CommonKafkaTracingConfig

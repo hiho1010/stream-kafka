@@ -1,0 +1,65 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'org.springframework.boot' version '3.5.0'
+    id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'org.bangbang'
+version = '0.1.0-kafka' // 버전을 구분하여 관리
+
+repositories {
+    mavenCentral()
+}
+
+// Spring Boot 실행 가능한 Jar가 아닌 라이브러리 Jar로 빌드
+bootJar {
+    enabled = false
+}
+
+jar {
+    enabled = true
+    archiveClassifier = null
+}
+
+ext {
+    set('springCloudVersion', "2025.0.0") // 기존 설정 유지
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}
+
+dependencies {
+    // --- Spring Cloud Stream Kafka (핵심 의존성) ---
+    api 'org.springframework.cloud:spring-cloud-starter-stream-kafka' //
+
+    // --- 유틸리티 및 Tracing ---
+    api 'io.micrometer:micrometer-tracing' // CommonKafkaTracingConfig에서 사용
+    api 'com.fasterxml.jackson.core:jackson-databind' // CommonKafkaConfig에서 ObjectMapper 사용
+    api 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310' // JavaTimeModule 사용
+
+    // --- Lombok ---
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // [주의] 만약 msa-common의 ApplicationException 등을 사용한다면
+    // msa-common을 의존성으로 추가하거나, 예외 클래스를 이 프로젝트로 복사해야 합니다.
+    // implementation 'org.bangbang:msa-common:0.1.0'
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21) // 기존 버전 유지
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+}
