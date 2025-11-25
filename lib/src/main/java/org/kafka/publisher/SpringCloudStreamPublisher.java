@@ -2,6 +2,7 @@ package org.kafka.publisher;
 
 import lombok.extern.slf4j.Slf4j;
 import org.kafka.event.BaseEvent;
+import org.kafka.exception.EventPublishException;
 import org.springframework.cloud.stream.function.StreamBridge;
 
 @Slf4j
@@ -15,7 +16,7 @@ public record SpringCloudStreamPublisher(StreamBridge streamBridge) implements E
 
         if (!sent) {
             log.error("이벤트 발행 실패 [Binding: {}, ID: {}]", bindingName, event.getEventId());
-            throw new RuntimeException("이벤트 발행 실패: " + bindingName);
+            throw new EventPublishException("이벤트 발행 실패: " + bindingName);
         }
 
         log.info("이벤트 발행 성공 [Binding: {}, ID: {}]", bindingName, event.getEventId());
